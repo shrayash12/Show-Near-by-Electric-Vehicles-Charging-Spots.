@@ -2,6 +2,9 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
 }
+plugins {
+    id 'kotlin-kapt'
+}
 
 android {
     compileSdkVersion 31
@@ -63,6 +66,9 @@ dependencies {
 
     //Location service
     implementation 'com.google.android.gms:play-services-location:19.0.1'
+
+    implementation 'com.google.dagger:dagger:2.31'
+    kapt 'com.google.dagger:dagger-compiler:2.30'
 
 
 }

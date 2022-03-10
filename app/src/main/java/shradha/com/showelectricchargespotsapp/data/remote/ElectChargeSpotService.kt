@@ -10,5 +10,4 @@ interface ElectChargeSpotService {
     suspend fun getChargingSpots(
         @QueryMap map: HashMap<String, String>
     ): List<ChargingSpotResponse>
-
 }

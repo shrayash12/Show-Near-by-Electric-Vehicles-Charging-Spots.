@@ -25,6 +25,5 @@ object ChargingMapper {
 
             )
         }.sortedBy { it.distance }
-
     }
 }

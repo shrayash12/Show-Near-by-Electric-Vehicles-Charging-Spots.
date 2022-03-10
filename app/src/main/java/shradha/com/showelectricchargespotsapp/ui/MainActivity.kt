@@ -20,19 +20,23 @@ import com.google.android.gms.tasks.OnSuccessListener
 import kotlinx.coroutines.Dispatchers
 import shradha.com.showelectricchargespotsapp.R
 import shradha.com.showelectricchargespotsapp.data.ElectricChargeSpotRepositoryImpl
+import shradha.com.showelectricchargespotsapp.di.ShowElectricChargeApplication
 import shradha.com.showelectricchargespotsapp.domain.ElectricChargeSpotViewModel
 import shradha.com.showelectricchargespotsapp.domain.ElectricChargeSpotViewModelFactory
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
+    @Inject
     lateinit var electricChargeSpotViewModel: ElectricChargeSpotViewModel
+
     lateinit var electricChargeSpotListAdapter: ElectricChargeSpotListAdapter
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setUpDependencyInjection()
         recyclerviewSetUp()
-        electricChargeSpotViewModel = createViewModel()
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
         fetchLocation()
@@ -40,6 +44,12 @@ class MainActivity : AppCompatActivity() {
             Log.d("MainActivity", "Charging" + it.size)
             electricChargeSpotListAdapter.submitList(it)
         })
+    }
+
+    private fun setUpDependencyInjection() {
+        (application as ShowElectricChargeApplication)
+            .appComponent
+            .inject(this)
     }
 
     private fun fetchLocation() {
@@ -62,26 +72,14 @@ class MainActivity : AppCompatActivity() {
         }
         task.addOnSuccessListener(this, OnSuccessListener {
             if (it != null) {
-                electricChargeSpotViewModel.getNearByChargingSpot(it.latitude, it.longitude)
+                val sharePref = getSharedPreferences(SHARE_PREF_NAME, MODE_PRIVATE)
+                val maxResult = sharePref.getString(KEY_MAX_RESULT, "10") ?: "10"
+                electricChargeSpotViewModel.getNearByChargingSpot(it.latitude, it.longitude ,maxResult)
             }
         })
         task.addOnFailureListener(this, OnFailureListener {
 
         })
-    }
-
-    private fun createViewModel(): ElectricChargeSpotViewModel {
-        val sharePref = getSharedPreferences(SHARE_PREF_NAME, MODE_PRIVATE)
-        val maxResult = sharePref.getString(KEY_MAX_RESULT, "10") ?: "10"
-        val electricChargeSpotRepository = ElectricChargeSpotRepositoryImpl(
-            Dispatchers.IO,
-            maxResult
-        )
-
-        val electricChargeSpotViewModel: ElectricChargeSpotViewModel by viewModels {
-            ElectricChargeSpotViewModelFactory(electricChargeSpotRepository)
-        }
-        return electricChargeSpotViewModel
     }
 
     private fun recyclerviewSetUp() {
