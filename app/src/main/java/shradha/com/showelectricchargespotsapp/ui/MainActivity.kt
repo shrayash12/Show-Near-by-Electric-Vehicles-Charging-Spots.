@@ -1,10 +1,12 @@
 package shradha.com.showelectricchargespotsapp.ui
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -69,7 +71,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createViewModel(): ElectricChargeSpotViewModel {
-        val electricChargeSpotRepository = ElectricChargeSpotRepositoryImpl(Dispatchers.IO)
+        val sharePref = getSharedPreferences(SHARE_PREF_NAME, MODE_PRIVATE)
+        val maxResult = sharePref.getString(KEY_MAX_RESULT, "10") ?: "10"
+        val electricChargeSpotRepository = ElectricChargeSpotRepositoryImpl(
+            Dispatchers.IO,
+            maxResult
+        )
 
         val electricChargeSpotViewModel: ElectricChargeSpotViewModel by viewModels {
             ElectricChargeSpotViewModelFactory(electricChargeSpotRepository)
@@ -90,4 +97,10 @@ class MainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.menu, menu)
         return true
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        startActivity(Intent(this, SettingActivity::class.java))
+        return true
+    }
+
 }
