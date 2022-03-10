@@ -10,7 +10,6 @@ import shradha.com.showelectricchargespotsapp.R
 const val SHARE_PREF_NAME = "maxSharePref"
 const val KEY_MAX_RESULT = "KEY_MAX_RESULT"
 
-
 class SettingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

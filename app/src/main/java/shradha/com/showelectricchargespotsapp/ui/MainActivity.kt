@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
@@ -17,12 +16,9 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
-import kotlinx.coroutines.Dispatchers
 import shradha.com.showelectricchargespotsapp.R
-import shradha.com.showelectricchargespotsapp.data.ElectricChargeSpotRepositoryImpl
 import shradha.com.showelectricchargespotsapp.di.ShowElectricChargeApplication
 import shradha.com.showelectricchargespotsapp.domain.ElectricChargeSpotViewModel
-import shradha.com.showelectricchargespotsapp.domain.ElectricChargeSpotViewModelFactory
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
@@ -87,8 +83,6 @@ class MainActivity : AppCompatActivity() {
         electricChargeSpotListAdapter = ElectricChargeSpotListAdapter()
         recyclerView.adapter = electricChargeSpotListAdapter
         recyclerView.layoutManager = LinearLayoutManager(this)
-
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -100,5 +94,4 @@ class MainActivity : AppCompatActivity() {
         startActivity(Intent(this, SettingActivity::class.java))
         return true
     }
-
 }
