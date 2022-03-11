@@ -28,7 +28,7 @@ Application to display near-by electric vehicles charging spots.
 Used Google MVVM architecture.
   1. MVVM with ViewModel and Repository to avoid logical code in Activity.
   2. Loose coupling by making code dependent on interfaces rather than implementations
-     eg:  ElectricChargeSpotRepository
+     eg:  ElectricChargeSpotRepository, SettingSharePref
 
 # Possible Improvement
   1. Caching the charging spots info in the local db 

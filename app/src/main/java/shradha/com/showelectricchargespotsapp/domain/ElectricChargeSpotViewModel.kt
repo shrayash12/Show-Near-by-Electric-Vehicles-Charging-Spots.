@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import shradha.com.showelectricchargespotsapp.data.ElectricChargeSpotRepository
+import shradha.com.showelectricchargespotsapp.data.SettingSharePref
 import shradha.com.showelectricchargespotsapp.data.model.ChargingStationInfo
 import javax.inject.Inject
 
@@ -18,7 +19,8 @@ class ElectricChargeSpotViewModel @Inject constructor(
 
     fun getNearByChargingSpot(lat: Double, long: Double, maxResult: String) {
         viewModelScope.launch {
-            val getChargeSpots = electricChargeSpotRepository.getNearByChargingSpots(lat, long, maxResult)
+            val getChargeSpots = electricChargeSpotRepository
+                .getNearByChargingSpots(lat, long, maxResult)
             _chargeSpots.postValue(
                 ChargingMapper.mapChargingSportResponseToCharInfo(
                     getChargeSpots,

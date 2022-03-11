@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
@@ -17,27 +19,35 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import shradha.com.showelectricchargespotsapp.R
+import shradha.com.showelectricchargespotsapp.data.SettingSharePref
+import shradha.com.showelectricchargespotsapp.data.SettingSharePrefImpl
 import shradha.com.showelectricchargespotsapp.di.ShowElectricChargeApplication
 import shradha.com.showelectricchargespotsapp.domain.ElectricChargeSpotViewModel
 import javax.inject.Inject
+
 
 class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var electricChargeSpotViewModel: ElectricChargeSpotViewModel
-
-    lateinit var electricChargeSpotListAdapter: ElectricChargeSpotListAdapter
-    lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var electricChargeSpotListAdapter: ElectricChargeSpotListAdapter
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var settingSharePref: SettingSharePref
+    private lateinit var progressBar: ProgressBar
+    private lateinit var recyclerView: RecyclerView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setUpDependencyInjection()
         recyclerviewSetUp()
+        progressBar = findViewById(R.id.progressBar1)
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-
+        settingSharePref = SettingSharePrefImpl(this)
         fetchLocation()
         electricChargeSpotViewModel.chargeSpots.observe(this, Observer {
             Log.d("MainActivity", "Charging" + it.size)
+            progressBar.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
             electricChargeSpotListAdapter.submitList(it)
         })
     }
@@ -46,6 +56,31 @@ class MainActivity : AppCompatActivity() {
         (application as ShowElectricChargeApplication)
             .appComponent
             .inject(this)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                101
+            )
+            return
+        }
+        fetchLocation()
     }
 
     private fun fetchLocation() {
@@ -68,18 +103,21 @@ class MainActivity : AppCompatActivity() {
         }
         task.addOnSuccessListener(this, OnSuccessListener {
             if (it != null) {
-                val sharePref = getSharedPreferences(SHARE_PREF_NAME, MODE_PRIVATE)
-                val maxResult = sharePref.getString(KEY_MAX_RESULT, "10") ?: "10"
-                electricChargeSpotViewModel.getNearByChargingSpot(it.latitude, it.longitude ,maxResult)
+                progressBar.visibility = View.VISIBLE
+                electricChargeSpotViewModel.getNearByChargingSpot(
+                    it.latitude,
+                    it.longitude,
+                    settingSharePref.getMaxResult()
+                )
             }
         })
         task.addOnFailureListener(this, OnFailureListener {
-
+            Log.d(MainActivity::class.java.simpleName, it.localizedMessage)
         })
     }
 
     private fun recyclerviewSetUp() {
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+        recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         electricChargeSpotListAdapter = ElectricChargeSpotListAdapter()
         recyclerView.adapter = electricChargeSpotListAdapter
         recyclerView.layoutManager = LinearLayoutManager(this)
