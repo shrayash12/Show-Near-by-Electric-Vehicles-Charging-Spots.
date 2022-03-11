@@ -19,7 +19,7 @@ class ElectricChargeSpotListAdapter :
         viewType: Int
     ): ElectricChargeSpotViewHolder {
         return ElectricChargeSpotViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.list_items, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.list_item, parent, false)
         )
     }
 
@@ -29,13 +29,13 @@ class ElectricChargeSpotListAdapter :
 
     class ElectricChargeSpotViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvTitle = itemView.findViewById<TextView>(R.id.tvTitle)
-        private val tvCountryId = itemView.findViewById<TextView>(R.id.tvCountryId)
-        private val tvLat = itemView.findViewById<TextView>(R.id.tvLat)
+        private val tvAddressTitle = itemView.findViewById<TextView>(R.id.tvAddressTitle)
+        private val tvDistance = itemView.findViewById<TextView>(R.id.tvDistance)
 
         fun bind(chargingStationInfo: ChargingStationInfo) {
             tvTitle.text = chargingStationInfo.title
-            tvCountryId.text = chargingStationInfo.country
-            tvLat.text = String.format("%.2f km", chargingStationInfo.distance)
+            tvAddressTitle.text = chargingStationInfo.country
+            tvDistance.text = String.format("%.2f km", chargingStationInfo.distance)
         }
     }
 
