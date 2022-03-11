@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import shradha.com.showelectricchargespotsapp.data.ElectricChargeSpotRepository
-import shradha.com.showelectricchargespotsapp.data.SettingSharePref
 import shradha.com.showelectricchargespotsapp.data.model.ChargingStationInfo
 import javax.inject.Inject
 

@@ -45,7 +45,6 @@ class MainActivity : AppCompatActivity() {
         settingSharePref = SettingSharePrefImpl(this)
         fetchLocation()
         electricChargeSpotViewModel.chargeSpots.observe(this, Observer {
-            Log.d("MainActivity", "Charging" + it.size)
             progressBar.visibility = View.GONE
             recyclerView.visibility = View.VISIBLE
             electricChargeSpotListAdapter.submitList(it)
@@ -64,44 +63,14 @@ class MainActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-            && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                101
-            )
-            return
-        }
+        if (checkPermission()) return
         fetchLocation()
     }
 
     private fun fetchLocation() {
         val task = fusedLocationProviderClient.lastLocation
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-            && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                101
-            )
-            return
-        }
-        task.addOnSuccessListener(this, OnSuccessListener {
+        if (checkPermission()) return
+        task.addOnSuccessListener(this) {
             if (it != null) {
                 progressBar.visibility = View.VISIBLE
                 electricChargeSpotViewModel.getNearByChargingSpot(
@@ -110,10 +79,30 @@ class MainActivity : AppCompatActivity() {
                     settingSharePref.getMaxResult()
                 )
             }
-        })
-        task.addOnFailureListener(this, OnFailureListener {
+        }
+        task.addOnFailureListener(this) {
             Log.d(MainActivity::class.java.simpleName, it.localizedMessage)
-        })
+        }
+    }
+
+    private fun checkPermission(): Boolean {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                101
+            )
+            return true
+        }
+        return false
     }
 
     private fun recyclerviewSetUp() {
