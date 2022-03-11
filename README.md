@@ -14,8 +14,7 @@ Application to display near-by electric vehicles charging spots.
 4. Have a setting menu to set max result to be fetched.
 5. Here is what the UI looks like ->
 
- https://ibb.co/BZTJpMH
-
+  https://ibb.co/Jsv5mhJ
 
 # Overview
   1. LiveData - To updates app component MainActivity from ViewModel.
