@@ -22,7 +22,6 @@ object ChargingMapper {
                     lat2 = it.addressInfo.latitude,
                     lon2 = it.addressInfo.longitude
                 )
-
             )
         }.sortedBy { it.distance }
     }

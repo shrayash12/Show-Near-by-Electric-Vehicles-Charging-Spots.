@@ -16,8 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
 import shradha.com.showelectricchargespotsapp.R
 import shradha.com.showelectricchargespotsapp.data.SettingSharePref
 import shradha.com.showelectricchargespotsapp.data.SettingSharePrefImpl
